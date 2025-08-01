@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula Archives Music Station - Where good music is universal.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS for the nebula background and general styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2a 30%, #2a0a3a 60%, #0a0a0a 100%);
+            background-size: 400% 400%;
+            animation: nebulaBackground 30s ease infinite;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        @keyframes nebulaBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background-color: rgba(25, 25, 35, 0.85); /* Slightly transparent dark background */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .player-controls button {
+            background-color: #4a0e7e; /* Purple */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-controls button:hover {
+            background-color: #6a1e9e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .player-controls button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #555;
+            outline: none;
+            border-radius: 4px;
+            transition: opacity .2s;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #8a2be2; /* BlueViolet */
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #8a2be2;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #333;
+            border-radius: 5px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #8a2be2; /* BlueViolet */
+            border-radius: 5px;
+            transition: width 0.1s linear;
+        }
+
+        .playlist-item {
+            background-color: rgba(40, 40, 50, 0.7);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex; /* Changed to flex to allow stacking of inner elements */
+            flex-direction: column; /* Stack children vertically */
+            align-items: flex-start; /* Align items to the start */
+            gap: 0.5rem; /* Space between elements within the item */
+        }
+
+        .playlist-item:hover {
+            background-color: rgba(60, 60, 70, 0.8);
+        }
+
+        .playlist-item.active {
+            background-color: #8a2be2; /* BlueViolet */
+            color: white;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .cd-section {
+            background-color: rgba(30, 30, 40, 0.7);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .track-info-row { /* New class for the row containing image, title, duration */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%; /* Ensure it spans full width */
+        }
+
+        .track-image-and-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* Space between image and title */
+        }
+
+        .track-art {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .track-details-box { /* Styling for the new text box */
+            background-color: rgba(60, 60, 70, 0.7);
+            color: #ccc;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem; /* text-sm */
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+            }
+            .main-player-section {
+                flex: 2;
+            }
+            .playlist-section {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="text-center mb-6">
+            <h1 class="text-5xl font-bold text-purple-400 mb-2">Nebula Archives Music Station</h1>
+            <p class="text-lg text-gray-300">- Where good music is universal.</p>
+            <p class="text-md text-gray-400 mt-4">Featuring music by <span class="font-semibold text-purple-300">The Phenomenal Dragos</span></p>
+        </header>
+
+        <!-- Main Player Section -->
+        <section class="main-player-section flex flex-col items-center justify-center p-6 bg-gradient-to-br from-gray-900 to-indigo-900 rounded-xl shadow-lg border border-gray-700">
+            <div class="album-art-container w-48 h-48 mb-6 shadow-md rounded-lg overflow-hidden">
+                <img id="main-album-art" src="https://placehold.co/192x192/ffffff/ffffff" alt="Album Art" class="w-full h-full object-cover">
+            </div>
+            <h2 id="now-playing-title" class="text-3xl font-bold text-white mb-2 text-center">Not Playing</h2>
+            <p id="now-playing-artist" class="text-xl text-gray-300 mb-4 text-center">The Phenomenal Dragos</p>
+
+            <div class="progress-bar-container mb-4" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="flex justify-between w-full text-sm text-gray-400 mb-6">
+                <span id="current-time">0:00</span>
+                <span id="total-time">0:00</span>
+            </div>
+
+            <div class="player-controls flex space-x-4 mb-6">
+                <button id="prev-btn" class="flex items-center justify-center"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+                <button id="play-pause-btn" class="flex items-center justify-center"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+                <button id="next-btn" class="flex items-center justify-center"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16 18h2V6h-2zm-8.5 6L17 12 8.5 6v12z"/></svg></button>
+            </div>
+
+            <div class="volume-control w-full max-w-xs flex items-center space-x-3">
+                <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M18 12c0-1.66-1.34-3-3-3v6c1.66 0 3-1.34 3-3zm-12-2v4h3l4 4V4l-4 4H6z"/></svg>
+                <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.01" value="0.7">
+                <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M3 10v4h3l4 4V6l-4 4H3zm11.5 0c-.83 0-1.5.67-1.5 1.5v3c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-3c0-.83-.67-1.5-1.5-1.5zM16.5 7c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zM19.5 4c-.83 0-1.5.67-1.5 1.5v13c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V5.5c0-.83-.67-1.5-1.5-1.5z"/></svg>
+            </div>
+        </section>
+
+        <!-- Playlist Section -->
+        <section class="playlist-section p-6 rounded-xl shadow-lg border border-gray-700 overflow-y-auto max-h-[600px] md:max-h-[unset] flex-grow">
+            <h3 class="text-2xl font-bold text-purple-400 mb-4">The Phenomenal Dragos Discography</h3>
+            <div id="playlist-container" class="space-y-4">
+                <!-- CD and Track items will be dynamically inserted here by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <audio id="audio-player" preload="metadata"></audio>
+
+    <script>
+        const musicData = [
+            {
+                cdName: "Cosmic Echoes",
+                artist: "The Phenomenal Dragos",
+                albumArt: "images/album cover images/Playing for the universe.png", // Kept for reference, not actively used in display
+                tracks: [
+                    { title: "Galactic Chill", duration: "0.32", src: "TRACKS/Cosmic lo-fi/Galactic Chill.mp3", trackArt: "IMAGES/Dragon listening to music in space.jpg", trackDetails: "A celestial journey through shimmering stardust. Song created with Udio, and image from DeepAI." },
+                    { title: "Nebula Drift", duration: "0:32", src: "TRACKS/Cosmic lo-fi/Stellar Vibes.mp3", trackArt: "images/Listening to the cosmos.png", trackDetails: "Enjoying the beats that accompany the cosmic wonders. Song created with Udio, image made with Pixlr." },
+                    { title: "Galactic DreamScape", duration: "3:20", src: "Tracks/Cosmic lo-fi/Galactic Dreamscapes.mp3", trackArt: "images/Vibing in Space.jpg", trackDetails: "A beat so pure, its rhythm will be sure to have you vibing across galaxies. Song created with Udio, image made with BingAI." },
+                ]
+            },
+            {
+                cdName: "Dark Ambience",
+                artist: "The Phenomenal Dragos",
+                albumArt: "images/album cover images/dark ambience cover.jpg",
+                tracks: [
+                    { title: "Eternal Echoes", duration: "0:32", src: "tracks/Epic Orchestral/Eternal Echoes.mp3", trackArt: "images/Shadow watching.png", trackDetails: "The dark corners of the cosmos now echo into a horrific shadow of fear. Song made with Udio, image from AI generator Pixlr." },
+                    { title: "Chasing Shadows", duration: "0:32", src: "tracks/Epic Orchestral/Chasing Shadows.mp3", trackArt: "images/soldier running.png", trackDetails: "In the dark, sometimes the shadows come out... Song generated with Udio, image generated with Pixlr AI prompts." },
+                ]
+            },
+            {
+                cdName: "Gospel To The Soul",
+                artist: "The Phenomenal Dragos",
+                albumArt: "images/album cover images/Music listening lady alt.jpg",
+                tracks: [
+                    { title: "Breaking The Chains", duration: "0:32", src: "tracks/Gospel Type Beats/Breaking the Chains.mp3", trackArt: "images/Breaking the Chainss.jpg", trackDetails: "Soak in the heavenly vibes that can liberate your mind free. Song made with Udio. Image generated with BingAI." },
+                    { title: "Sacred Spirit", duration: "0:32", src: "tracks/Gospel Type Beats/Sacred Spirit.mp3", trackArt: "images/Music listening lady.jpg", trackDetails: "The spirit  within us is sacred, and so should be the music we listen to. Song made with Udio. Image generated with DeepAI." },
+                    { title: "Lift up his Name", duration: "0:32", src: "tracks/Gospel Type Beats/Lift Up His Name.mp3", trackArt: "images/Vibing to good music.jpg", trackDetails: "Lift up his name to the melodies of uplifting melodies provided only songs The Phenomenal Dracos could produce! Song made with Udio, image generated with Bing AI." },
+                ]
+            },
+            {
+                cdName: "Eerie Hip-Hop beats",
+                artist: "The Phenomenal Dragos",
+                albumArt: "images/Dark observer.jpg",
+                tracks: [
+                    { title: "Eldritch Shadows", duration: "0:32", src: "tracks/Hip hop beats/Eternal Shadows.mp3", trackArt: "images/watching the shadows.jpg", trackDetails: "The Phenomenal Dracos bring you a bone-chilling beat with this track dedicated to those who want a little horror in their melodies! Song made with Uido. Image generated with BingAI." },
+                    { title: "Eldritch Echoes", duration: "0:32", src: "tracks/Hip hop beats/Eldritch Echoes.mp3", trackArt: "images/Dark observer.jpg", trackDetails: "The Phenomenal Dracos bring you a unique beat with a sound that feels as if it echoes across the atmosphere! Song made with Udio. Image generated with BingAI." },
+                ]
+            }
+        ];
+
+        const audioPlayer = document.getElementById('audio-player');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const volumeSlider = document.getElementById('volume-slider');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.getElementById('progress-container');
+        const currentTimeSpan = document.getElementById('current-time');
+        const totalTimeSpan = document.getElementById('total-time');
+        const nowPlayingTitle = document.getElementById('now-playing-title');
+        const nowPlayingArtist = document.getElementById('now-playing-artist');
+        const mainAlbumArt = document.getElementById('main-album-art'); // Reference to main album art image
+        const playlistContainer = document.getElementById('playlist-container');
+
+        let currentTrackIndex = -1;
+        let currentCdIndex = -1;
+        let isPlaying = false;
+
+        // Function to format time (e.g., 150 seconds -> 2:30)
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        }
+
+        // Function to load a track
+        function loadTrack(cdIndex, trackIndex) {
+            currentCdIndex = cdIndex;
+            currentTrackIndex = trackIndex;
+            const cd = musicData[cdIndex];
+            const track = cd.tracks[trackIndex];
+
+            audioPlayer.src = track.src;
+            nowPlayingTitle.textContent = track.title;
+            nowPlayingArtist.textContent = cd.artist;
+            mainAlbumArt.src = track.trackArt; // Update main album art to track's art
+
+            // Update active class in playlist
+            document.querySelectorAll('.playlist-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeItem = document.querySelector(`[data-cd-index="${cdIndex}"][data-track-index="${trackIndex}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+
+            // Load metadata to get duration
+            audioPlayer.load();
+        }
+
+        // Function to play or pause the audio
+        function togglePlayPause() {
+            if (currentTrackIndex === -1) {
+                // If no song is selected, start with the first song
+                loadTrack(0, 0);
+                audioPlayer.play();
+                isPlaying = true;
+                playPauseBtn.innerHTML = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                return;
+            }
+
+            if (isPlaying) {
+                audioPlayer.pause();
+                playPauseBtn.innerHTML = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'; // Play icon
+            } else {
+                audioPlayer.play();
+                playPauseBtn.innerHTML = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Function to play the next song
+        function playNext() {
+            if (currentTrackIndex === -1) {
+                loadTrack(0, 0);
+                audioPlayer.play();
+                isPlaying = true;
+                playPauseBtn.innerHTML = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                return;
+            }
+
+            let nextTrack = currentTrackIndex + 1;
+            let nextCd = currentCdIndex;
+
+            if (nextTrack < musicData[currentCdIndex].tracks.length) {
+                loadTrack(nextCd, nextTrack);
+            } else {
+                nextCd++;
+                if (nextCd < musicData.length) {
+                    loadTrack(nextCd, 0);
+                } else {
+                    // Loop back to the first song of the first CD
+                    loadTrack(0, 0);
+                }
+            }
+            audioPlayer.play();
+            isPlaying = true;
+            playPauseBtn.innerHTML = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+        }
+
+        // Function to play the previous song
+        function playPrev() {
+            if (currentTrackIndex === -1) {
+                loadTrack(0, 0);
+                audioPlayer.play();
+                isPlaying = true;
+                playPauseBtn.innerHTML = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                return;
+            }
+
+            let prevTrack = currentTrackIndex - 1;
+            let prevCd = currentCdIndex;
+
+            if (prevTrack >= 0) {
+                loadTrack(prevCd, prevTrack);
+            } else {
+                prevCd--;
+                if (prevCd >= 0) {
+                    loadTrack(prevCd, musicData[prevCd].tracks.length - 1);
+                } else {
+                    // Loop back to the last song of the last CD
+                    prevCd = musicData.length - 1;
+                    loadTrack(prevCd, musicData[prevCd].tracks.length - 1);
+                }
+            }
+            audioPlayer.play();
+            isPlaying = true;
+            playPauseBtn.innerHTML = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+        }
+
+        // Event Listeners
+        playPauseBtn.addEventListener('click', togglePlayPause);
+        prevBtn.addEventListener('click', playPrev);
+        nextBtn.addEventListener('click', playNext);
+
+        audioPlayer.addEventListener('timeupdate', () => {
+            const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+            currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
+        });
+
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            totalTimeSpan.textContent = formatTime(audioPlayer.duration);
+        });
+
+        audioPlayer.addEventListener('ended', () => {
+            playNext();
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            audioPlayer.volume = e.target.value;
+        });
+
+        progressContainer.addEventListener('click', (e) => {
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audioPlayer.duration;
+            audioPlayer.currentTime = (clickX / width) * duration;
+        });
+
+        // Populate Playlist
+        function populatePlaylist() {
+            musicData.forEach((cd, cdIndex) => {
+                const cdSection = document.createElement('div');
+                cdSection.classList.add('cd-section', 'mb-6');
+                cdSection.innerHTML = `
+                    <h4 class="text-xl font-semibold text-purple-300 mb-2">${cd.cdName}</h4>
+                    <ul class="space-y-2" id="cd-${cdIndex}-tracks">
+                        <!-- Tracks will go here -->
+                    </ul>
+                `;
+                playlistContainer.appendChild(cdSection);
+
+                const trackList = cdSection.querySelector(`#cd-${cdIndex}-tracks`);
+                cd.tracks.forEach((track, trackIndex) => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('playlist-item');
+                    listItem.setAttribute('data-cd-index', cdIndex);
+                    listItem.setAttribute('data-track-index', trackIndex);
+                    listItem.innerHTML = `
+                        <div class="track-info-row">
+                            <div class="track-image-and-title">
+                                <img src="${track.trackArt}" alt="${track.title} Album Art" class="track-art">
+                                <span class="text-gray-200 font-medium">${track.title}</span>
+                            </div>
+                            <span class="text-gray-400 text-sm">${track.duration}</span>
+                        </div>
+                        <div class="track-details-box">
+                            ${track.trackDetails}
+                        </div>
+                    `;
+                    listItem.addEventListener('click', () => {
+                        loadTrack(cdIndex, trackIndex);
+                        audioPlayer.play();
+                        isPlaying = true;
+                        playPauseBtn.innerHTML = '<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; // Pause icon
+                    });
+                    trackList.appendChild(listItem);
+                });
+            });
+        }
+
+        // Initialize on window load
+        window.onload = function() {
+            populatePlaylist();
+            audioPlayer.volume = volumeSlider.value; // Set initial volume
+        };
+    </script>
+</body>
+</html>
